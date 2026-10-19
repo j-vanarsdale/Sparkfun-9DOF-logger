@@ -1,109 +1,13 @@
 {
   "name": "imu-datalogger",
   "version": "1.0.0",
-  "description": "Logs SparkFun Qwiic 9DoF IMU (ICM-20948) accel/gyro/mag/temp data to UTC-timestamped JSONL files.",
-  "author": "Eventide",
-  "dependencies": {
-    "apt": ["i2c-tools"]
-  },
+  "description": "Logs raw SparkFun Qwiic 9DoF IMU (ICM-20948) data with UTC timestamps.",
   "recordings_subdir": "imu",
-  "arguments": [
-    {
-      "name": "rate_hz",
-      "flag": "--rate",
-      "type": "float",
-      "default": 50,
-      "required": false,
-      "description": "Sample rate in Hz (1-200). The magnetometer itself updates at 100 Hz."
-    },
-    {
-      "name": "accel_range_g",
-      "flag": "--accel-range",
-      "type": "int",
-      "default": 4,
-      "required": false,
-      "description": "Accelerometer full-scale range in g: 2, 4, 8 or 16."
-    },
-    {
-      "name": "gyro_range_dps",
-      "flag": "--gyro-range",
-      "type": "int",
-      "default": 500,
-      "required": false,
-      "description": "Gyroscope full-scale range in deg/s: 250, 500, 1000 or 2000."
-    },
-    {
-      "name": "i2c_address",
-      "flag": "--i2c-address",
-      "type": "int",
-      "default": 105,
-      "required": false,
-      "description": "I2C address in decimal (105 = 0x69 default, 104 = 0x68 with the address jumper closed)."
-    },
-    {
-      "name": "autostart",
-      "flag": "--autostart",
-      "type": "int",
-      "default": 0,
-      "required": false,
-      "description": "1 = start recording as soon as the program starts; 0 = wait for RECORD from the dashboard."
-    }
-  ],
-  "sockets": [
-    {
-      "name": "http_api",
-      "type": "tcp",
-      "description": "Recording control + live IMU telemetry (HTTP/JSON)"
-    }
-  ],
   "programs": [
     {
       "name": "imu_datalogger",
-      "command": "{venv_python} {module_dir}/imu_datalogger.py --output-dir {recordings_subdir} --bind 127.0.0.1:{socket:http_api} --rate {arg:rate_hz} --accel-range {arg:accel_range_g} --gyro-range {arg:gyro_range_dps} --i2c-address {arg:i2c_address} --autostart {arg:autostart}",
-      "directory": "{module_dir}",
-      "autostart": true,
-      "autorestart": true,
-      "startretries": 10000,
-      "priority": 10,
-      "user": "root"
-    }
-  ],
-  "ui": [
-    {
-      "id": "imu-live",
-      "type": "telemetry",
-      "title": "IMU",
-      "region": "sidebar",
-      "default": true,
-      "socket": "http_api",
-      "get": "/api/telemetry",
-      "interval": 500,
-      "rows": [
-        {"label": "Status", "path": "status"},
-        {"label": "UTC", "path": "sample.t_utc"},
-        {"label": "Accel X (g)", "path": "sample.accel_g.x", "fmt": "f2"},
-        {"label": "Accel Y (g)", "path": "sample.accel_g.y", "fmt": "f2"},
-        {"label": "Accel Z (g)", "path": "sample.accel_g.z", "fmt": "f2"},
-        {"label": "Gyro X (°/s)", "path": "sample.gyro_dps.x", "fmt": "f1"},
-        {"label": "Gyro Y (°/s)", "path": "sample.gyro_dps.y", "fmt": "f1"},
-        {"label": "Gyro Z (°/s)", "path": "sample.gyro_dps.z", "fmt": "f1"},
-        {"label": "Mag X (µT)", "path": "sample.mag_ut.x", "fmt": "f1"},
-        {"label": "Mag Y (µT)", "path": "sample.mag_ut.y", "fmt": "f1"},
-        {"label": "Mag Z (µT)", "path": "sample.mag_ut.z", "fmt": "f1"},
-        {"label": "Temp (°C)", "path": "sample.temp_c", "fmt": "f1"},
-        {"label": "Actual rate (Hz)", "path": "actual_rate_hz", "fmt": "f1"},
-        {"label": "Samples logged", "path": "samples_written", "fmt": "int"}
-      ]
-    },
-    {
-      "id": "imu-record",
-      "type": "recording",
-      "title": "IMU RECORD",
-      "region": "sidebar",
-      "default": true,
-      "socket": "http_api",
-      "get": "/api/recording",
-      "put": "/api/recording"
+      "command": "{venv_python} {module_dir}/imu_logger.py --output-dir {recordings_subdir}",
+      "directory": "{module_dir}"
     }
   ]
 }
