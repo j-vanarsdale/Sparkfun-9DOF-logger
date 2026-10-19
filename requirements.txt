@@ -1,0 +1,4 @@
+# Installed into this module's own venv at install time.
+# (smbus2 is pulled in automatically by the qwiic I2C driver.)
+sparkfun-qwiic-icm20948
+flask
